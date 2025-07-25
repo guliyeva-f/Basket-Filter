@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basket && Filter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+        integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header>
+        <div class="container" id="header">
+            <i class="fa-solid fa-sort" onclick="openFilter()"></i>
+            <h1>Kitabxanam</h1>
+            <i class="fa-solid fa-basket-shopping" onclick="openBasket()">
+                <span id="basket-count" class="basket-count">0</span>
+            </i>
+        </div>
+    </header>
+    <main>
+        <div class="overlay filter-panel" id="filterPanel">
+            <div class="close-btn" onclick="closePanels()">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div id="filter-title">Diqqət! <br> Filter hissəsi itkin düşüb. Son dəfə Elvinin tapşırığı kimi görünüb. <br> Tapılacaq... <br> Yazılacaq... <br>
+                Ədalət bərpa olunacaq...😄🔍</div>
+        </div>
+        <div class="overlay basket-panel" id="basketPanel">
+            <div class="close-btn" onclick="closePanels()">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div id="products">
+                <!-- js dən gələcək -->
+            </div>
+            <div id="basket-summary" class="basket-summary">
+                <p class="summary-line">Ümumi: <span id="total-price">0₼</span></p>
+                <p class="summary-line">Endirim: <span id="discount">0₼</span></p>
+                <p class="summary-line">Çatdırılma: <span id="delivery">0₼</span></p>
+                <p class="summary-line total">Yekun: <span id="final-total">0₼</span></p>
+                <div class="basket-actions">
+                    <button onclick="confirmOrder()" class="confirm-btn">Sifarişi təsdiqlə</button>
+                    <button onclick="clearBasket()" class="clear-btn">Səbəti təmizlə</button>
+                </div>
+            </div>
+        </div>
+        <div class="backdrop" id="backdrop" onclick="closePanels()"></div>
+        <div id="books" class="container">
+            <!-- js ilə gələcək -->
+        </div>
+    </main>
+
+    <script src="assets/script.js"></script>
+</body>
+
+</html>
