@@ -101,61 +101,31 @@ let data = [
     },
 ]
 
-const books = document.getElementById("books");
+function renderBooks(bookArray) {
+    books.innerHTML = "";
 
-data.forEach(book => {
-    books.innerHTML += `<div class="book">
-                                    <img class="book-img" src="${book.img}" alt="">
-                                    <div class="book-content">
-                                        <h2 class="book-title">${book.title}</h2>
-                                        <span class="book-price">${book.price}₼</span>
-                                        <p class="description">${book.description}</p>
-                                        <button class="btn" onclick="addToBasket(${book.id})">
-                                        <i class="fa-solid fa-cart-shopping"></i>Səbətə at </button>
-                                    </div>
-                                </div>`;
-});
-
-const filterPanel = document.getElementById("filterPanel");
-const basketPanel = document.getElementById("basketPanel");
-const backdrop = document.getElementById("backdrop");
-
-function openFilter() {
-    filterPanel.classList.add("active");
-    basketPanel.classList.remove("active");
-    backdrop.classList.add("active");
-}
-
-function openBasket() {
-    const totalCount = data.reduce((sum, item) => sum + item.count, 0);
-    if (totalCount === 0) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Səbət boşdur',
-            text: 'Əlavə etmək üçün məhsul seç',
-            timer: 1500,
-            showConfirmButton: false
-        });
+    if (bookArray.length === 0) {
+        books.innerHTML = "<p style='text-align:center; font-size:24px; color:#999; margin-top: 50px'>Uyğun kitab tapılmadı 📚</p>";
         return;
     }
-    basketPanel.classList.add("active");
-    filterPanel.classList.remove("active");
-    backdrop.classList.add("active");
+
+    bookArray.forEach(book => {
+        books.innerHTML += `<div class="book">
+                                <img class="book-img" src="${book.img}" alt="">
+                                <div class="book-content">
+                                    <h2 class="book-title">${book.title}</h2>
+                                    <span class="book-price">${book.price}₼</span>
+                                    <p class="description">${book.description}</p>
+                                    <button class="btn" onclick="addToBasket(${book.id})">
+                                        <i class="fa-solid fa-cart-shopping"></i>Səbətə at 
+                                    </button>
+                                </div>
+                            </div>`;
+    });
 }
 
-
-function closePanels() {
-    filterPanel.classList.remove("active");
-    basketPanel.classList.remove("active");
-    backdrop.classList.remove("active");
-}
-
-function changeCount(id, n) {
-    const product = data.find(item => item.id === id);
-    product.count += n;
-    if (product.count <= 0) product.count = 0;
-    renderBasket();
-}
+const books = document.getElementById("books");
+renderBooks(data);
 
 let total = 0;
 function renderBasket() {
@@ -243,10 +213,21 @@ function clearBasket() {
 
 function confirmOrder() {
     if (total > 0) {
+        const orderItems = data
+            .filter(item => item.count > 0)
+            .map(item => ({
+                id: item.id,
+                title: item.title,
+                price: item.price * item.count,
+                count: item.count,
+                date: new Date().toLocaleString(),
+                status: "Yoldadır"
+            }));
+
+        orders.push(...orderItems);
         Swal.fire({
             icon: 'success',
             title: 'Sifarişin qəbul edildi!',
-            text: 'Təşəkkürlər!',
             confirmButtonText: 'Bağla'
         }).then(() => {
             clearBasketWithoutAlert();
@@ -258,8 +239,6 @@ function confirmOrder() {
             title: 'Səbət boşdur!',
             text: 'Məhsul əlavə etməmisən',
             confirmButtonText: 'Bağla'
-        }).then(() => {
-            closePanels();
         });
     }
 }
@@ -267,4 +246,122 @@ function confirmOrder() {
 function clearBasketWithoutAlert() {
     data.forEach(item => item.count = 0);
     renderBasket();
+}
+
+const uniqueCategories = [...new Set(data.map(book => book.category))];
+const uniqueAuthors = [...new Set(data.map(book => book.author))];
+
+const categorySelect = document.getElementById("category-select");
+const authorSelect = document.getElementById("author-select");
+
+function populateSelect(el, arr) {
+    let options = '<option value="">Hamısı</option>';
+    arr.forEach(value => {
+        options += `<option value="${value}">${value}</option>`;
+    });
+    el.innerHTML = options;
+}
+
+populateSelect(categorySelect, uniqueCategories);
+populateSelect(authorSelect, uniqueAuthors);
+
+function applyFilter() {
+    const selectedCategory = categorySelect.value;
+    const selectedAuthor = authorSelect.value;
+
+    let filteredBooks = data;
+    if (selectedCategory) {
+        filteredBooks = filteredBooks.filter(book => book.category === selectedCategory);
+    }
+    if (selectedAuthor) {
+        filteredBooks = filteredBooks.filter(book => book.author === selectedAuthor);
+    }
+    renderBooks(filteredBooks);
+}
+
+function resetFilter() {
+    categorySelect.value = "";
+    authorSelect.value = "";
+    renderBooks(data);
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Filtrlər sıfırlandı!',
+        showConfirmButton: false,
+        timer: 1500
+    }).then(() => {
+        closePanels();
+    });
+}
+
+const filterPanel = document.getElementById("filterPanel");
+const basketPanel = document.getElementById("basketPanel");
+const backdrop = document.getElementById("backdrop");
+const ordersPanel = document.getElementById('ordersPanel');
+
+function openFilter() {
+    filterPanel.classList.add("active");
+    basketPanel.classList.remove("active");
+    backdrop.classList.add("active");
+}
+
+function openBasket() {
+    const totalCount = data.reduce((sum, item) => sum + item.count, 0);
+    if (totalCount === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Səbət boşdur',
+            text: 'Əlavə etmək üçün məhsul seç',
+            timer: 1500,
+            showConfirmButton: false
+        });
+        return;
+    }
+    basketPanel.classList.add("active");
+    filterPanel.classList.remove("active");
+    backdrop.classList.add("active");
+}
+
+function closePanels() {
+    filterPanel.classList.remove("active");
+    basketPanel.classList.remove("active");
+    backdrop.classList.remove("active");
+    ordersPanel.classList.remove("active");
+}
+
+function changeCount(id, n) {
+    const product = data.find(item => item.id === id);
+    product.count += n;
+    if (product.count <= 0) product.count = 0;
+    renderBasket();
+}
+
+let orders = [];
+
+function openOrdersModal() {
+    const tbody = document.querySelector("#ordersTable tbody");
+    tbody.innerHTML = "";
+
+    if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="font-size: 20px; color: #B22222;">Sifariş yoxdur</td></tr>`;
+    } else {
+        orders.forEach((order, index) => {
+            tbody.innerHTML += `<tr>
+                            <td>${index + 1}</td>
+                            <td class="order-title">${order.title}</td>
+                            <td>${order.date}</td>
+                            <td>${order.count}</td> <!-- say -->
+                            <td>${order.price}₼</td>
+                            <td class="order-status">${order.status}</td>
+                        </tr>`;
+        });
+    }
+
+    ordersPanel.classList.add("active");
+    backdrop.classList.add("active");
+}
+
+function closeOrdersModal() {
+    ordersPanel.classList.remove("active");
+    backdrop.classList.remove("active");
 }

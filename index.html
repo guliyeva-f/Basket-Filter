@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="assets/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <header>
         <div class="container" id="header">
@@ -25,8 +27,18 @@
             <div class="close-btn" onclick="closePanels()">
                 <i class="fa-solid fa-xmark"></i>
             </div>
-            <div id="filter-title">Diqqət! <br> Filter hissəsi itkin düşüb. Son dəfə Elvinin tapşırığı kimi görünüb. <br> Tapılacaq... <br> Yazılacaq... <br>
-                Ədalət bərpa olunacaq...😄🔍</div>
+            <div class="filter-content">
+                <h2 class="filter-heading">Filtr</h2>
+                <div class="filter-group">
+                    <label for="category-select">Kateqoriya:</label>
+                    <select id="category-select" onchange="applyFilter()"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="author-select">Müəllif:</label>
+                    <select id="author-select" onchange="applyFilter()"></select>
+                </div>
+                <button class="reset-btn" onclick="resetFilter()">Sıfırla</button>
+            </div>
         </div>
         <div class="overlay basket-panel" id="basketPanel">
             <div class="close-btn" onclick="closePanels()">
@@ -41,10 +53,11 @@
                 <p class="summary-line">Çatdırılma: <span id="delivery">0₼</span></p>
                 <p class="summary-line total">Yekun: <span id="final-total">0₼</span></p>
                 <div class="basket-actions">
-                    <button onclick="confirmOrder()" class="confirm-btn">Sifarişi təsdiqlə</button>
                     <button onclick="clearBasket()" class="clear-btn">Səbəti təmizlə</button>
+                    <button onclick="confirmOrder()" class="confirm-btn">Sifarişi təsdiqlə</button>
                 </div>
             </div>
+
         </div>
         <div class="backdrop" id="backdrop" onclick="closePanels()"></div>
         <div id="books" class="container">
@@ -52,7 +65,31 @@
         </div>
     </main>
 
+    <div id="followOrdersBtn" class="follow-orders-icon" onclick="openOrdersModal()">
+        <i class="fa-solid fa-clipboard-list"></i>
+    </div>
+    <div id="ordersPanel" class="orders-panel">
+        <div class="orders-header">
+            <h2>Sifarişlərim</h2>
+            <i class="fa-solid fa-xmark close-orders" onclick="closeOrdersModal()"></i>
+        </div>
+        <table id="ordersTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Məhsul</th>
+                    <th>Tarix/Saat</th>
+                    <th>Say</th>
+                    <th>Qiymət</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!-- Js ilə gələcək -->
+            </tbody>
+        </table>
+    </div>
     <script src="assets/script.js"></script>
 </body>
-
 </html>
